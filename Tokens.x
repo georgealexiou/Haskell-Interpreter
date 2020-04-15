@@ -11,11 +11,11 @@ $alpha = [a-zA-Z]
 tokens :-
 $white+       ;
   "--".*        ; 
-  int              { \s -> TokenInt }
-  boolean          { \s -> TokenBool }
-  float            { \s -> TokenFloat }
-  list             { \s -> TokenList }
-  lists            { \s -> TokenLists }
+  int              { \s -> TokenTypeInt }
+  boolean          { \s -> TokenTypeBool }
+  float            { \s -> TokenTypeFloat }
+  list             { \s -> TokenTypeList }
+  lists            { \s -> TokenTypeLists }
   loop             { \s -> TokenLoop }
   do\:             { \s -> TokenDo }
   if               { \s -> TokenIf}
@@ -29,7 +29,7 @@ $white+       ;
   \.len            { \s -> TokenListLength }  
   \.append         { \s -> TokenListAppend }
   \.pop            { \s -> TokenListPop }
-  \.get            { \s -> TokenListGetElement}
+  \.get            { \s -> TokenListGet }
 
   \>\=             { \s -> TokenGreaterEquals }
   \<\=             { \s -> TokenLessEquals }
@@ -38,6 +38,8 @@ $white+       ;
   \=\=             { \s -> TokenEquals }
   \!\=             { \s -> TokenNotEquals}
   \!               { \s -> TokenNot}
+  or               { \s -> TokenOR }
+  and              { \s -> TokenAND }
 
   $digit+          { \s -> TokenDigit (read s) }
   \+\+             { \s -> TokenIncrement }
@@ -65,11 +67,11 @@ $white+       ;
 -- Each action has type :: String -> Token 
 -- The token type: 
 data Token = 
-   TokenInt                          |
-   TokenBool                         |
-   TokenFloat                        |
-   TokenList                         |
-   TokenLists                        |
+   TokenTypeInt                          |
+   TokenTypeBool                         |
+   TokenTypeFloat                        |
+   TokenTypeList                         |
+   TokenTypeLists                        |
    TokenLoop                         |
    TokenDo                           |
    TokenIf                           |
@@ -82,7 +84,7 @@ data Token =
    TokenListLength                   |
    TokenListAppend                   |
    TokenListPop                      |
-   TokenListGetElement               |
+   TokenListGet               |
    TokenGreaterEquals                |
    TokenLessEquals                   |
    TokenGreater                      |
@@ -106,6 +108,8 @@ data Token =
    TokenTrue                         |
    TokenFalse                        |
    TokenEndLine                      |
+   TokenOR                           |
+   TokenAND                          |
    TokenVar String
   deriving (Eq,Show) 
 

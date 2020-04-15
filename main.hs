@@ -2,7 +2,7 @@
 
 import System.IO
 import Tokens
---import Grammar
+import Grammar
 import Data.List
 import Control.Monad
 import System.IO
@@ -25,6 +25,7 @@ main = do
         --    Left e -> error "Couldn't parse input"
         --    Right n -> print "Could parse input successfuly"
         let tokens :: [Token] = alexScanTokens contents
-        --let exps :: Exp = parseCalc tokens 
         print tokens
+        let exps :: Lines = parseCalc tokens 
+        print exps
         hClose handle1
