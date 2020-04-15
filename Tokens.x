@@ -2,7 +2,7 @@
 module Tokens where 
 }
 
-%wrapper "basic" 
+%wrapper "posn" 
 $digit = 0-9     
 -- digits 
 $alpha = [a-zA-Z]    
@@ -11,106 +11,157 @@ $alpha = [a-zA-Z]
 tokens :-
 $white+       ;
   "--".*        ; 
-  int              { \s -> TokenTypeInt }
-  boolean          { \s -> TokenTypeBool }
-  float            { \s -> TokenTypeFloat }
-  list             { \s -> TokenTypeList }
-  lists            { \s -> TokenTypeLists }
-  loop             { \s -> TokenLoop }
-  do\:             { \s -> TokenDo }
-  if               { \s -> TokenIf}
-  endLoop          { \s -> TokenEndLoop }
-  endIf            { \s -> TokenEndIf }
-  else             { \s -> TokenElse }
-  break            { \s -> TokenBreak }
-  print            { \s -> TokenPrint }
-  input            { \s -> TokenInput}
+  int              { tok (\p s -> TokenTypeInt p) }
+  boolean          { tok (\p s -> TokenTypeBool p)}
+  float            { tok (\p s -> TokenTypeFloat p)}
+  list             { tok (\p s -> TokenTypeList p)}
+  lists            { tok (\p s -> TokenTypeLists p)}
+  loop             { tok (\p s -> TokenLoop p)}
+  do\:             { tok (\p s -> TokenDo p)}
+  if               { tok (\p s -> TokenIf p)}
+  endLoop          { tok (\p s -> TokenEndLoop p)}
+  endIf            { tok (\p s -> TokenEndIf p)}
+  else             { tok (\p s -> TokenElse p)}
+  break            { tok (\p s -> TokenBreak p)}
+  print            { tok (\p s -> TokenPrint p)}
+  input            { tok (\p s -> TokenInput p)}
 
-  \.len            { \s -> TokenListLength }  
-  \.append         { \s -> TokenListAppend }
-  \.pop            { \s -> TokenListPop }
-  \.get            { \s -> TokenListGet }
+  \.len            { tok (\p s -> TokenListLength p)}  
+  \.append         { tok (\p s -> TokenListAppend p)}
+  \.pop            { tok (\p s -> TokenListPop p)}
+  \.get            { tok (\p s -> TokenListGet p)}
 
-  \>\=             { \s -> TokenGreaterEquals }
-  \<\=             { \s -> TokenLessEquals }
-  \>               { \s -> TokenGreater }
-  \<               { \s -> TokenLess }
-  \=\=             { \s -> TokenEquals }
-  \!\=             { \s -> TokenNotEquals}
-  \!               { \s -> TokenNot}
-  or               { \s -> TokenOR }
-  and              { \s -> TokenAND }
+  \>\=             { tok (\p s -> TokenGreaterEquals p)}
+  \<\=             { tok (\p s -> TokenLessEquals p)}
+  \>               { tok (\p s -> TokenGreater p)}
+  \<               { tok (\p s -> TokenLess p)}
+  \=\=             { tok (\p s -> TokenEquals p)}
+  \!\=             { tok (\p s -> TokenNotEquals p)}
+  \!               { tok (\p s -> TokenNot p)}
+  or               { tok (\p s -> TokenOR p)}
+  and              { tok (\p s -> TokenAND p)}
 
-  $digit+          { \s -> TokenDigit (read s) }
-  \+\+             { \s -> TokenIncrement }
-  \=               { \s -> TokenAssign }
-  \+               { \s -> TokenPlus }
-  \-               { \s -> TokenMinus }
-  \*               { \s -> TokenTimes }
-  \/               { \s -> TokenDiv }
-  mod              { \s -> TokenModulo }
-  div              { \s -> TokenIntDiv }
+  $digit+          { tok (\p s -> TokenDigit p (read s) ) }
+  \+\+             { tok (\p s -> TokenIncrement p) }
+  \=               { tok (\p s -> TokenAssign p) }
+  \+               { tok (\p s -> TokenPlus p) }
+  \-               { tok (\p s -> TokenMinus p) }
+  \*               { tok (\p s -> TokenTimes p) }
+  \/               { tok (\p s -> TokenDiv p) }
+  mod              { tok (\p s -> TokenModulo p) }
+  div              { tok (\p s -> TokenIntDiv p) }
 
-  \(               { \s -> TokenParenthesisOpen }
-  \)               { \s -> TokenParenthesisClose }
-  \[               { \s -> TokenSquareBracketsOpen }
-  \]               { \s -> TokenSquareBracketsClose }
+  \(               { tok (\p s -> TokenParenthesisOpen p) }
+  \)               { tok (\p s -> TokenParenthesisClose p) }
+  \[               { tok (\p s -> TokenSquareBracketsOpen p) }
+  \]               { tok (\p s -> TokenSquareBracketsClose p) }
 
-  true             { \s -> TokenTrue }
-  false            { \s -> TokenFalse }
+  true             { tok (\p s -> TokenTrue p) }
+  false            { tok (\p s -> TokenFalse p) }
 
-  \;               { \s -> TokenEndLine }
+  \;               { tok (\p s -> TokenEndLine p) }
 
-  $alpha [$alpha $digit \_ \’]*   { \s -> TokenVar s } 
+  $alpha [$alpha $digit \_ \’]*   { tok (\p s -> TokenVar p s) } 
 
 { 
+
+-- Helper function
+tok f p s = f p s
+
 -- Each action has type :: String -> Token 
 -- The token type: 
 data Token = 
-   TokenTypeInt                          |
-   TokenTypeBool                         |
-   TokenTypeFloat                        |
-   TokenTypeList                         |
-   TokenTypeLists                        |
-   TokenLoop                         |
-   TokenDo                           |
-   TokenIf                           |
-   TokenEndLoop                      |
-   TokenEndIf                        |
-   TokenElse                         |
-   TokenBreak                        |
-   TokenPrint                        |
-   TokenInput                        |
-   TokenListLength                   |
-   TokenListAppend                   |
-   TokenListPop                      |
-   TokenListGet               |
-   TokenGreaterEquals                |
-   TokenLessEquals                   |
-   TokenGreater                      |
-   TokenLess                         |
-   TokenEquals                       |
-   TokenNotEquals                    |
-   TokenNot                          |
-   TokenDigit Int                    |
-   TokenIncrement                    |
-   TokenAssign                       |
-   TokenPlus                         |
-   TokenMinus                        |
-   TokenTimes                        |
-   TokenDiv                          |
-   TokenModulo                       |
-   TokenIntDiv                       |
-   TokenParenthesisOpen              |
-   TokenParenthesisClose             |
-   TokenSquareBracketsOpen           |
-   TokenSquareBracketsClose          |
-   TokenTrue                         |
-   TokenFalse                        |
-   TokenEndLine                      |
-   TokenOR                           |
-   TokenAND                          |
-   TokenVar String
+   TokenTypeInt AlexPosn                      |
+   TokenTypeBool AlexPosn                     |
+   TokenTypeFloat AlexPosn                    |
+   TokenTypeList AlexPosn                     |
+   TokenTypeLists AlexPosn                    |
+   TokenLoop AlexPosn                         |
+   TokenDo AlexPosn                           |
+   TokenIf AlexPosn                           |
+   TokenEndLoop AlexPosn                      |
+   TokenEndIf AlexPosn                        |
+   TokenElse AlexPosn                         |
+   TokenBreak AlexPosn                        |
+   TokenPrint AlexPosn                        |
+   TokenInput AlexPosn                        |
+   TokenListLength AlexPosn                   |
+   TokenListAppend AlexPosn                   |  
+   TokenListPop AlexPosn                      |
+   TokenListGet AlexPosn                      |
+   TokenGreaterEquals AlexPosn                |
+   TokenLessEquals AlexPosn                   |
+   TokenGreater AlexPosn                      |
+   TokenLess AlexPosn                         |
+   TokenEquals AlexPosn                       |
+   TokenNotEquals AlexPosn                    |
+   TokenNot AlexPosn                          |
+   TokenDigit AlexPosn Int                    |
+   TokenIncrement AlexPosn                    |
+   TokenAssign AlexPosn                       |
+   TokenPlus AlexPosn                         |
+   TokenMinus AlexPosn                        |
+   TokenTimes AlexPosn                        |
+   TokenDiv AlexPosn                          |
+   TokenModulo AlexPosn                       |
+   TokenIntDiv AlexPosn                       |
+   TokenParenthesisOpen AlexPosn              |
+   TokenParenthesisClose AlexPosn             |
+   TokenSquareBracketsOpen AlexPosn           |
+   TokenSquareBracketsClose AlexPosn          |
+   TokenTrue AlexPosn                         |   
+   TokenFalse AlexPosn                        |
+   TokenEndLine AlexPosn                      |
+   TokenOR AlexPosn                           |
+   TokenAND AlexPosn                          |
+   TokenVar AlexPosn String
   deriving (Eq,Show) 
+
+tokenPosn :: Token -> String
+tokenPosn (TokenDigit (AlexPn a l c) _ ) = show(l) ++ ":" ++ show(c)
+tokenPosn (TokenVar (AlexPn a l c) _ ) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenTypeInt (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenTypeBool (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenTypeFloat (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenTypeList (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenTypeLists (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenLoop (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenDo (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenEndLoop (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenEndIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenBreak (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenPrint (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenInput (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenListLength (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenListAppend (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenListPop (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenListGet (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenGreaterEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenLessEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenGreater (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenLess (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenNotEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenNot (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenIncrement (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenAssign (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenPlus (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenMinus (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenTimes (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenDiv (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenModulo (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenIntDiv (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenParenthesisOpen (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenParenthesisClose (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenSquareBracketsOpen (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenSquareBracketsClose (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenTrue (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenFalse (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenEndLine (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenOR (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenAND (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+
 
 }

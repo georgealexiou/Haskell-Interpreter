@@ -7,48 +7,48 @@ import Tokens
 %tokentype { Token } 
 %error { parseError }
 %token
-    break          { TokenBreak }
-    len            { TokenListLength }
-    get            { TokenListGet }
-	input          { TokenInput }
-    '++'           { TokenIncrement }
-    append         { TokenListAppend }
-    pop            { TokenListPop }
-    '='            { TokenAssign }
-    TypeInt        { TokenTypeInt }
-    TypeBool           { TokenTypeBool }
-    TypeFloat          { TokenTypeFloat }
-    TypeList           { TokenTypeList }
-    TypeLists          { TokenTypeLists }
-    print          { TokenPrint }
-	loop           { TokenLoop }
-    do             { TokenDo }
-    if             { TokenIf }
-    endLoop        { TokenEndLoop }
-    endIf          { TokenEndIf }
-    else           { TokenElse }
-    div            { TokenIntDiv }
-    mod            { TokenModulo }
-    '>='           { TokenGreaterEquals }
-    '<='           { TokenLessEquals }
-    '>'            { TokenGreater }
-    '!='           { TokenNotEquals }
-    '!'            { TokenNot }
-    OR             { TokenOR }
-    AND            { TokenAND }
-    '<'            { TokenLess }
-    '=='           { TokenEquals }
-    varName        { TokenVar $$ }
-    int            { TokenDigit $$ }
-    '+'            { TokenPlus }
-    '-'            { TokenMinus }
-    '*'            { TokenTimes }
-    '/'            { TokenDiv }
-    '('            { TokenParenthesisOpen }
-    ')'            { TokenParenthesisClose }
-    true           { TokenTrue }
-    false          { TokenFalse }
-    ';'            { TokenEndLine }
+    break          { TokenBreak _ }
+    len            { TokenListLength _ }
+    get            { TokenListGet _ }
+	input          { TokenInput _ }
+    '++'           { TokenIncrement _ }
+    append         { TokenListAppend _ }
+    pop            { TokenListPop _ }
+    '='            { TokenAssign _}
+    TypeInt        { TokenTypeInt _}
+    TypeBool           { TokenTypeBool _}
+    TypeFloat          { TokenTypeFloat _}
+    TypeList           { TokenTypeList _}
+    TypeLists          { TokenTypeLists _}
+    print          { TokenPrint _}
+	loop           { TokenLoop _}
+    do             { TokenDo _}
+    if             { TokenIf _}
+    endLoop        { TokenEndLoop _}
+    endIf          { TokenEndIf _}
+    else           { TokenElse _}
+    div            { TokenIntDiv _}
+    mod            { TokenModulo _}
+    '>='           { TokenGreaterEquals _}
+    '<='           { TokenLessEquals _}
+    '>'            { TokenGreater _}
+    '!='           { TokenNotEquals _}
+    '!'            { TokenNot _}
+    OR             { TokenOR _}
+    AND            { TokenAND _}
+    '<'            { TokenLess _}
+    '=='           { TokenEquals _ }
+    varName        { TokenVar _ $$ }
+    int            { TokenDigit _ $$ }
+    '+'            { TokenPlus _}
+    '-'            { TokenMinus _}
+    '*'            { TokenTimes _}
+    '/'            { TokenDiv _}
+    '('            { TokenParenthesisOpen _}
+    ')'            { TokenParenthesisClose _}
+    true           { TokenTrue _}
+    false          { TokenFalse _}
+    ';'            { TokenEndLine _}
 
 %left ';'
 %nonassoc '(' ')' 
@@ -118,7 +118,8 @@ Line :
     
 { 
 parseError :: [Token] -> a
-parseError _ = error "Parse error"
+parseError [] = error "Unknown Parse Error" 
+parseError (t:ts) = error ("Parse error at line:column " ++ (tokenPosn t))
 
 data Lines = If Line Lines | IfElse Line Lines Lines 
            | Loop Line Lines
