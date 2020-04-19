@@ -3,6 +3,7 @@
 import System.IO
 import Tokens
 import Grammar
+import Evaluator1
 import Data.List
 import Control.Monad
 import System.IO
@@ -15,8 +16,12 @@ import Control.DeepSeq
 
 main = do
         -- handle ((_) -> putStrLn "Error reading number" )
-        handle1 <- openFile "test.txt" ReadMode
-        contents :: String <- hGetContents handle1
+        input :: String <- readFile "input1.txt"
+         -- <- hGetContents handle2
+        let inputLists ::[[Int]] = readInputFile input
+
+        contents :: String <- readFile "test.txt"
+         -- <- hGetContents handle1
         -- let eVal = (alexScanTokens contents)
         -- catch (do putStrLn (show eVal))
         --       (\err -> error "Could not parse input")
@@ -28,4 +33,12 @@ main = do
         print tokens
         let exps :: Lines = parseCalc tokens 
         print exps
-        hClose handle1
+        let kostis :: String = startEvaluationWithInput exps (transpose inputLists)
+        print kostis
+        -- print $ transpose inputLists 
+
+readInputFile :: String -> [[Int]]
+readInputFile input = map f (map words (lines input))
+
+f :: [String] -> [Int]
+f = map read

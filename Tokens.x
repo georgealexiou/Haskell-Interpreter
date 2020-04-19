@@ -24,7 +24,6 @@ $white+       ;
   else             { tok (\p s -> TokenElse p)}
   break            { tok (\p s -> TokenBreak p)}
   print            { tok (\p s -> TokenPrint p)}
-  input            { tok (\p s -> TokenInput p)}
 
   \.len            { tok (\p s -> TokenListLength p)}  
   \.append         { tok (\p s -> TokenListAppend p)}
@@ -36,6 +35,7 @@ $white+       ;
   \>               { tok (\p s -> TokenGreater p)}
   \<               { tok (\p s -> TokenLess p)}
   \=\=             { tok (\p s -> TokenEquals p)}
+  \=\=\=           { tok (\p s -> TokenIntEquals p)}
   \!\=             { tok (\p s -> TokenNotEquals p)}
   \!               { tok (\p s -> TokenNot p)}
   or               { tok (\p s -> TokenOR p)}
@@ -84,7 +84,6 @@ data Token =
    TokenElse AlexPosn                         |
    TokenBreak AlexPosn                        |
    TokenPrint AlexPosn                        |
-   TokenInput AlexPosn                        |
    TokenListLength AlexPosn                   |
    TokenListAppend AlexPosn                   |  
    TokenListPop AlexPosn                      |
@@ -94,6 +93,7 @@ data Token =
    TokenGreater AlexPosn                      |
    TokenLess AlexPosn                         |
    TokenEquals AlexPosn                       |
+   TokenIntEquals AlexPosn                    |
    TokenNotEquals AlexPosn                    |
    TokenNot AlexPosn                          |
    TokenDigit AlexPosn Int                    |
@@ -133,7 +133,6 @@ tokenPosn (TokenEndIf (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenElse (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenBreak (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenPrint (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
-tokenPosn (TokenInput (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenListLength (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenListAppend (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenListPop (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
@@ -143,6 +142,7 @@ tokenPosn (TokenLessEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c)
 tokenPosn (TokenGreater (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenLess (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
+tokenPosn (TokenIntEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenNotEquals (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenNot (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 
 tokenPosn (TokenIncrement (AlexPn a l c)) = show(l) ++ ":" ++ show(c) 

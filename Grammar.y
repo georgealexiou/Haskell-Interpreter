@@ -10,7 +10,6 @@ import Tokens
     break          { TokenBreak _ }
     len            { TokenListLength _ }
     get            { TokenListGet _ }
-	input          { TokenInput _ }
     '++'           { TokenIncrement _ }
     append         { TokenListAppend _ }
     pop            { TokenListPop _ }
@@ -38,6 +37,7 @@ import Tokens
     AND            { TokenAND _}
     '<'            { TokenLess _}
     '=='           { TokenEquals _ }
+    '==='          { TokenIntEquals _ }
     varName        { TokenVar _ $$ }
     int            { TokenDigit _ $$ }
     '+'            { TokenPlus _}
@@ -53,7 +53,7 @@ import Tokens
 %left ';'
 %nonassoc '(' ')' 
 %nonassoc get len
-%nonassoc print input
+%nonassoc print
 %nonassoc '=' '++'
 %nonassoc append pop
 %nonassoc TypeInt TypeBool TypeFloat TypeList TypeLists
@@ -61,7 +61,7 @@ import Tokens
 %left AND OR
 %left '!=' '=='
 %right '!'
-%nonassoc '<=' '>=' '>' '<'
+%nonassoc '<=' '>=' '>' '<' '==='
 %left '++'
 %left '+' '-'
 %left '*' '/'
@@ -106,12 +106,12 @@ Line :
      | Line '/' Line            { Divide $1 $3 }
      | Line '<' Line            { Less $1 $3 }
      | Line '==' Line           { Equals $1 $3 }
+     | Line '===' Line           { IntEquals $1 $3 }
      | '(' Line ')'             { $2 } 
      | true                     { TTrue }
      | false                    { TFalse }
      | int                      { Int $1 } 
      | varName                  { Var $1 }
-     | input                    { TInput }
      | varName len              { Len $1 }
      | varName get '(' Line ')' { Get $1 $4 }
      | break                    { BreakLoop }
@@ -135,26 +135,30 @@ data Lines = If Line Lines | IfElse Line Lines Lines
 		   | ListsDeclare String 
            | VarAssign String Line
            | Print String
-           |  Append String Line | Pop String 
+           | Append String Line | Pop String 
            | LinesSequencing Lines Lines
            deriving (Show,Eq)
 
-data Line = Int Int | Var String |	TTrue | TFalse | TInput
+data Line = Int Int | Var String |	TTrue | TFalse
           | Plus Line Line 
           | Minus Line Line 
           | Times Line Line 
           | Divide Line Line 
           | Mod Line Line 
           | Div Line Line  
+          
+          | IntEquals Line Line 
           | GreaterEquals Line Line
           | LessEquals Line Line 
           | Greater Line Line 
           | Less Line Line 
+
           | Equals Line Line 
           | NotEquals Line Line 
           | Or Line Line
           | And Line Line 
           | Not Line
+
           | Len String
           | Get String Line
           | BreakLoop
