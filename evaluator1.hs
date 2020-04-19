@@ -152,6 +152,7 @@ prettyPrint _ = error "lmao noob"
 
 calculateInt :: Line -> Environment -> Int
 calculateInt (Int a) env = a
+calculateInt (Negate a) env = (-1) * calculateInt a env
 calculateInt (Plus a b) env = calculateInt a env + calculateInt b env
 calculateInt (Minus a b) env = calculateInt a env - calculateInt b env
 calculateInt (Times a b) env = calculateInt a env * calculateInt b env

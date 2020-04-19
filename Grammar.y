@@ -67,6 +67,7 @@ import Tokens
 %left '*' '/'
 %left mod div
 %nonassoc int true false varName
+%left NEG
 
 %%
 Lines : if '(' Line ')' Lines endIf             { If $3 $5 }
@@ -106,7 +107,7 @@ Line :
      | Line '/' Line            { Divide $1 $3 }
      | Line '<' Line            { Less $1 $3 }
      | Line '==' Line           { Equals $1 $3 }
-     | Line '===' Line           { IntEquals $1 $3 }
+     | Line '===' Line          { IntEquals $1 $3 }
      | '(' Line ')'             { $2 } 
      | true                     { TTrue }
      | false                    { TFalse }
@@ -115,6 +116,7 @@ Line :
      | varName len              { Len $1 }
      | varName get '(' Line ')' { Get $1 $4 }
      | break                    { BreakLoop }
+     | '-' Line %prec NEG       { Negate $2 } 
     
 { 
 parseError :: [Token] -> a
@@ -140,6 +142,7 @@ data Lines = If Line Lines | IfElse Line Lines Lines
            deriving (Show,Eq)
 
 data Line = Int Int | Var String |	TTrue | TFalse
+		  | Negate Line
           | Plus Line Line 
           | Minus Line Line 
           | Times Line Line 

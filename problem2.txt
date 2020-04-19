@@ -1,0 +1,25 @@
+list list1 = Input.get(0);
+list list2 = Input.get(1);
+list list3 = Input.get(2);
+list list4;
+int x = 0;
+int a = 0;
+int b = 0;
+int c = 0;
+
+boolean flag = true;
+loop (flag) do:
+	a = list1.get(0); list1.pop;
+	b = list2.get(0); list2.pop;
+	c = list3.get(0); list3.pop;
+	list4.append(c);
+	list4.append(b);
+	list4.append(a);
+	list4.append(a+b);
+	list4.append(c+b);
+	if ( (list1.len === 0) or (list2.len === 0) or (list3.len === 0) )
+		flag = false;
+	endIf;
+endLoop;
+
+print list4;
