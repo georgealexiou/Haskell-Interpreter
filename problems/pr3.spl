@@ -1,0 +1,28 @@
+list list1 = Input.get(0);
+list list2 = Input.get(1);
+list list3;
+
+int a = 0;
+int b = 0;
+
+list3.append(0);
+boolean flag = true;
+
+loop (flag) do:
+    list2.pop;
+    b = list2.get(0);
+    list2.pop;
+
+    a = list1.get(0);
+    list1.pop;
+
+    list3.append(b);
+    list3.append(a);
+
+    if ( ( list2.len < 1) or ( list1.len === 0))
+        flag = false;
+    endIf;
+
+endLoop;
+
+print list3;
