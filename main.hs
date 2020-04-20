@@ -3,7 +3,7 @@
 import System.IO
 import Tokens
 import Grammar
-import Evaluator1
+import Evaluator
 import Data.List
 import Control.Monad
 import System.IO
@@ -14,31 +14,29 @@ import System.IO.Error
 import Text.Read
 import Control.DeepSeq
 
-main = do
-        -- handle ((_) -> putStrLn "Error reading number" )
-        input :: String <- readFile "input1.txt"
-         -- <- hGetContents handle2
-        let inputLists ::[[Int]] = readInputFile input
+main :: IO()
+main = catch main' noParse
 
-        contents :: String <- readFile "test.txt"
-         -- <- hGetContents handle1
-        -- let eVal = (alexScanTokens contents)
-        -- catch (do putStrLn (show eVal))
-        --       (\err -> error "Could not parse input")
-        -- eVal <- (alexScanTokens contents)
-        -- case eVal of
-        --    Left e -> error "Couldn't parse input"
-        --    Right n -> print "Could parse input successfuly"
-        let tokens :: [Token] = alexScanTokens contents
-        print tokens
-        let exps :: Lines = parseCalc tokens 
-        print exps
-        let kostis :: String = startEvaluationWithInput exps (transpose inputLists)
-        print kostis
-        -- print $ transpose inputLists 
+main' = do (filename : _ ) <- getArgs
+           -- Read code file and generate Tokens and Grammar
+           sourceCode :: String <- readFile filename
+           let tokens :: [Token] = alexScanTokens sourceCode
+           let exps :: Lines = parseCalc tokens 
+           
+           -- Read input.txt
+           input :: String <- getContents
+           let inputLists ::[[Int]] = readInputFile input
+           
+           let runProgram :: String = startEvaluationWithInput exps (transpose inputLists)
+           print runProgram
 
 readInputFile :: String -> [[Int]]
 readInputFile input = map f (map words (lines input))
 
 f :: [String] -> [Int]
 f = map read
+
+noParse :: ErrorCall -> IO ()
+noParse e = do let err =  show e
+               hPutStr stderr err
+               return ()
