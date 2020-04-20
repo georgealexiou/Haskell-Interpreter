@@ -1,0 +1,14 @@
+list list1 = Input.get(0);
+list list2;
+
+int a = 0;
+int b = 0;
+
+loop (! (list1.len === 0) ) do:
+	a = list1.get(0); list1.pop;
+	list2.append(a+b);
+
+	b = b + a;
+endLoop;
+
+print list2;
