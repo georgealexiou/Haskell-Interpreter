@@ -11,14 +11,14 @@ type Environment = [(Types,String)]
 --            Controller Frames  Variables
 type State = (Lines,[Lines],Environment)
 
-finalise :: State -> String
-finalise ( (Print varName), kontinuation, env )  = prettyPrint var where
+finalise :: State -> Types
+finalise ( (Print varName), kontinuation, env )  = var where
   var = fst (getVarfromEnv varName env) 
 
-startEvaluation :: Lines -> String
+startEvaluation :: Lines -> Types
 startEvaluation aaa = finalise $ evaluate (initialiseState $ createListOfLines aaa)
 
-startEvaluationWithInput :: Lines -> [[Int]] -> String
+startEvaluationWithInput :: Lines -> [[Int]] -> Types
 startEvaluationWithInput aaa liness = finalise $ evaluate (initialiseStateWithInput (createListOfLines aaa) liness)
 
 -- takes the result object of happy/parser and makes it into a list of Lines
@@ -37,13 +37,15 @@ initialiseStateWithInput liness listss = (head liness, tail liness, [((TypeLists
 evaluate :: State -> State
 
 -- IntDeclare
-evaluate ( (IntDeclare varName), kontinuation, env ) 
+evaluate ( (IntDeclare varName), kontinuation, env )
+    | kontinuation == [] = error "Last line of your code must be printing something"
     | checkIfVarExists varName env = error ("Variable: " ++ varName ++ " already exists")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, env++[( (TypeInt 0) ,varName)])
 
 -- BoolDeclare
-evaluate ( (BoolDeclare varName), kontinuation, env ) 
+evaluate ( (BoolDeclare varName), kontinuation, env )
+    | kontinuation == [] = error "Last line of your code must be printing something"
     | checkIfVarExists varName env = error ("Variable: " ++ varName ++ " already exists")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, env++[( (TypeBool False),varName) ])
@@ -51,18 +53,21 @@ evaluate ( (BoolDeclare varName), kontinuation, env )
 
 -- ListDeclare
 evaluate ( (ListDeclare varName), kontinuation, env ) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | checkIfVarExists varName env = error ("Variable: " ++ varName ++ " already exists")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, env++[( (TypeList []) ,varName)] )
 
 -- ListsDeclare
 evaluate ( (ListsDeclare varName), kontinuation, env ) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | checkIfVarExists varName env = error ("Variable: " ++ varName ++ " already exists")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, env++[( (TypeLists []) ,varName)] )
 
 -- IntDeclareAssign String Line 
 evaluate ( (IntDeclareAssign varName value), kontinuation, env ) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | checkIfVarExists varName env = error ("Variable: " ++ varName ++ " already exists")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, env++[( (TypeInt calculatedValue) ,varName)] )
@@ -70,6 +75,7 @@ evaluate ( (IntDeclareAssign varName value), kontinuation, env )
 
 -- BoolDeclareAssign String Line 
 evaluate ( (BoolDeclareAssign varName value), kontinuation, env ) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | checkIfVarExists varName env = error ("Variable: " ++ varName ++ "already exists")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, env++[( (TypeBool calculatedValue) ,varName)] )
@@ -77,20 +83,15 @@ evaluate ( (BoolDeclareAssign varName value), kontinuation, env )
 
 -- ListDeclareAssign String Line 
 evaluate ( (ListDeclareAssign varName value), kontinuation, env ) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | checkIfVarExists varName env = error ("Variable: " ++ varName ++ "already exists")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, env++[( (TypeList calculatedValue) ,varName)] )
           calculatedValue = calculateList value env
 
--- ListsDeclareAssign String Line 
-evaluate ( (ListDeclareAssign varName value), kontinuation, env ) 
-    | checkIfVarExists varName env = error ("Variable: " ++ varName ++ "already exists")
-    | otherwise = evaluate nextState
-    where nextState = (head kontinuation, tail kontinuation, env++[( (TypeLists calculatedValue) ,varName)] )
-          calculatedValue = calculateLists value env
-
 -- VarAssign String Line
 evaluate ( (VarAssign varName value), kontinuation, env ) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | not (checkIfVarExists varName env) = error ("Variable: " ++ varName ++ " does not exist")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, newEnv )
@@ -102,6 +103,7 @@ evaluate ( (VarAssign varName value), kontinuation, env )
 
 --Append String Line
 evaluate ((Append varName value), kontinuation, env) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | not (checkIfVarExists varName env) = error ("List with name: " ++ varName ++ " does not exist")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, newEnv )
@@ -113,6 +115,7 @@ evaluate ((Append varName value), kontinuation, env)
 
 --Pop String 
 evaluate ((Pop varName), kontinuation, env) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | not (checkIfVarExists varName env) = error ("List with name: " ++ varName ++ " does not exist")
     | otherwise = evaluate nextState
     where nextState = (head kontinuation, tail kontinuation, newEnv )
@@ -124,17 +127,20 @@ evaluate ((Pop varName), kontinuation, env)
 
 -- If Statement
 evaluate ((If condition lines), kontinuation, env) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | calculateBool condition env = evaluate ( head (createListOfLines lines), tail (createListOfLines lines) ++ kontinuation, env )
     | otherwise = evaluate (head kontinuation, tail kontinuation, env )
 
 -- IfElse Statement
 evaluate ((IfElse condition thenLines elseLines), kontinuation, env) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | calculateBool condition env = evaluate ( head (createListOfLines thenLines), tail (createListOfLines thenLines) ++ kontinuation, env )
     | otherwise = evaluate ( head (createListOfLines elseLines), tail (createListOfLines elseLines) ++ kontinuation, env )
 
 
 -- While Loop
 evaluate ((Loop condition lines), kontinuation, env) 
+    | kontinuation == [] = error "Last line of your code must be Printing something"
     | calculateBool condition env = evaluate (head (createListOfLines lines), tail (createListOfLines lines) ++ [(Loop condition lines)] ++ kontinuation  , env )
     | otherwise = evaluate (head kontinuation, tail kontinuation, env)
 
@@ -144,11 +150,6 @@ evaluate state@( (Print varName), kontinuation, env)
     | otherwise = state
 
 evaluate sda = error (show sda)
-
-prettyPrint :: Types -> String
-prettyPrint (TypeList xs) = show xs where
-  -- prettyXs = tail $ concatMap (\x -> " ":[(show x)] ) xs 
-prettyPrint _ = error "lmao noob"
 
 calculateInt :: Line -> Environment -> Int
 calculateInt (Int a) env = a
@@ -223,7 +224,8 @@ getVariableValue (TypeLists _) varName env = checkedVar where
 
 popList :: Types -> Types
 popList (TypeList xs) = (TypeList (tail xs) )
-popList _ = error "Tried to pop something that is not a List"  
+popList (TypeLists xss) = (TypeLists (tail xss) )
+popList _ = error "Tried to pop something that is not a List or Lists"  
 
 lenList :: Types -> Int
 lenList (TypeList xs) = length xs 
@@ -233,7 +235,9 @@ lenList _ = error "Tried to get the length of a variable that is not List/Lists"
 appendList :: Types -> Line -> Environment -> Types
 appendList (TypeList xs) expr env = (TypeList (xs++[x]) ) where
   x = calculateInt expr env
-appendList _ _ _ = error "Tried to append something that is not a List"
+appendList (TypeLists xss) expr env = (TypeLists (xss++[xs]) ) where
+  xs = calculateList expr env
+appendList _ _ _ = error "Tried to append something that is not a List/Lists"
 
 getFromList :: Types -> Int -> Int
 getFromList (TypeList xs) i = item where
