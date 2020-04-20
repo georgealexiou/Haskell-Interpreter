@@ -1,0 +1,23 @@
+list list1 = Input.get(0);
+
+list list2;
+
+int a = 0;
+int b = 0;
+int c = 0;
+
+boolean flag = true;
+loop (flag and (list1.len >= 3) ) do:
+    a = list1.get(0); list1.pop;
+    b = list1.get(0); list1.pop;
+    c = list1.get(0); list1.pop;
+
+    list2.append(c);
+    list2.append(2*b);
+    list2.append(3 * a - 1);
+    if ( list1.len < 3 )
+        flag = false;
+    endIf;
+endLoop;
+
+print list2;
