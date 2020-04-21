@@ -27,8 +27,10 @@ main' = do (filename : _ ) <- getArgs
            input :: String <- getContents
            let inputLists ::[[Int]] = readInputFile input
            
-           let runProgram :: String = startEvaluationWithInput exps (transpose inputLists)
-           print runProgram
+           -- TypeList [ints], TypeLists [[ints]] 
+           let runProgram :: Types = startEvaluationWithInput exps (transpose inputLists)
+
+           sequence_ $ (prettyPrint runProgram) >>= (\x -> [putStrLn x] )  
 
 readInputFile :: String -> [[Int]]
 readInputFile input = map f (map words (lines input))
@@ -40,3 +42,16 @@ noParse :: ErrorCall -> IO ()
 noParse e = do let err =  show e
                hPutStr stderr err
                return ()
+
+prettyPrint :: Types -> [String]
+prettyPrint (TypeList xs) = pretty where
+  pretty = prettyPrint (TypeLists [xs])
+prettyPrint (TypeInt x) = pretty where
+  pretty = prettyPrint (TypeLists [[x]])
+prettyPrint (TypeLists xss) = map (\x -> init $ concatStrings x ) pretty where
+  pretty = map (map (show)) $ transpose xss
+prettyPrint _ = error "lmao noob"
+
+concatStrings :: [String] -> String
+concatStrings (x:xs) = x ++ " " ++ concatStrings xs
+concatStrings [] = ""
