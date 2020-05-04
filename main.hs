@@ -1,3 +1,6 @@
+-- Georgios Alexiou
+-- Stavros Shikkis
+
 {-# LANGUAGE ScopedTypeVariables #-}
 
 import System.IO
@@ -50,8 +53,14 @@ prettyPrint (TypeInt x) = pretty where
   pretty = prettyPrint (TypeLists [[x]])
 prettyPrint (TypeLists xss) = map (\x -> init $ concatStrings x ) pretty where
   pretty = map (map (show)) $ transpose xss
-prettyPrint _ = error "lmao noob"
+prettyPrint _ = error "Cannot pretty print"
 
 concatStrings :: [String] -> String
 concatStrings (x:xs) = x ++ " " ++ concatStrings xs
 concatStrings [] = ""
+
+check :: Char -> String
+check '[' = ""
+check ']' = "\n"
+check ',' = " "
+check x = [x]

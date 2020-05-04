@@ -1,3 +1,6 @@
+-- Georgios Alexiou
+-- Stavros Shikkis
+
 {-# LANGUAGE ScopedTypeVariables #-}
 module Evaluator where
 import Grammar
@@ -276,7 +279,7 @@ checkType (TypeInt _) (TypeLists _) = error "Used Int variable where Lists was e
 checkType (TypeBool _) (TypeLists _) = error "Used Bool variable where Lists was expected"
 checkType (TypeList _) (TypeLists _) = error "Used List variable where Lists was expected"
 
-checkType _ _ = error "Ise stupid"
+checkType _ _ = error "Unknown data type"
 
 calculateNewValue :: Types -> Line -> Environment -> Types
 calculateNewValue (TypeInt _) expr env = (TypeInt calcValue) where
@@ -287,7 +290,7 @@ calculateNewValue (TypeList _) expr env = (TypeList calcValue) where
   calcValue = calculateList expr env
 calculateNewValue (TypeLists _) expr env = (TypeLists calcValue) where
   calcValue = calculateLists expr env
-calculateNewValue _ _ _ = error "ise malakas"
+calculateNewValue _ _ _ = error "Unknown type"
 
 removeVarFromEnv :: (Types,String) -> Environment -> Environment
 removeVarFromEnv variable2Find (var:vars) | var == variable2Find = vars

@@ -11,11 +11,11 @@ DEPEND += Grammar.hs Tokens.hs main.hs evaluator.hs
 
 # When "make" is invoked with no arguments, we build an executable 
 #  after building everything that it depends on
-all: $(DEPEND) splInterpreter
+all: $(DEPEND) myinterpreter
 
-# Build an executable for Spl interpreter
-splInterpreter: $(DEPEND) main.hs
-	ghc -o splInterpreter main.hs
+# Build an executable for interpreter
+myinterpreter: $(DEPEND) main.hs
+	ghc -o myinterpreter main.hs
 
 # Generate ML files from a parser definition file
 Grammar.hs : Grammar.y
