@@ -1,0 +1,16 @@
+list list1 = Input.get(0);
+
+list output;
+
+int counter = 0;
+
+loop ( list1.len > 0 ) do:
+
+     output.append( list1.get(0) ); 
+     list1.pop;
+     counter++; 
+     output.append(counter);
+
+endLoop;
+
+print output;

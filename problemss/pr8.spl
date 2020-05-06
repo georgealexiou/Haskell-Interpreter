@@ -1,0 +1,46 @@
+list list1 = Input.get(0);
+list list2 = Input.get(1);
+list output;
+
+int sumA = 0;
+int sumB = 0;
+
+int counter = 0;
+
+boolean flagA = true;
+boolean flagB = true;
+
+loop (flagA and flagB) do:
+
+     loop ( (counter < 5) ) do:
+     
+         if ( list1.len > 0 )
+             output.append(list1.get(0));
+             sumA = sumA + list1.get(0);
+             list1.pop;
+         else
+             flagA = false;
+         endIf;
+
+         if ( list2.len > 0 )
+             output.append(list2.get(0));
+             sumB = sumB + list2.get(0);
+             list2.pop;
+         else
+             flagB = false;
+         endIf;
+
+         counter++;
+     endLoop;
+
+     if ( flagA and flagB )
+        output.append(sumA - sumB);
+     endIf;
+     
+     sumA = 0;
+     sumB = 0;
+     counter = 0;
+
+endLoop;
+
+print output;

@@ -1,0 +1,20 @@
+list list1 = Input.get(0);
+
+list output;
+
+boolean flag = false;
+
+loop ( (list1.len >= 4) or ( (! flag) and (list1.len >=3) )  ) do:
+
+    list1.pop; list1.pop;
+
+    if (flag)
+       list1.pop;
+    endIf;
+
+    output.append(list1.get(0)); list1.pop;
+    flag = ! flag;
+
+endLoop;
+
+print output;

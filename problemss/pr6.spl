@@ -1,0 +1,24 @@
+lists ab;
+ab = Input;
+list list1; list1 = ab.get(0);
+list list2; list2 = ab.get(1); 
+
+list output;
+loop (list1.len > 0 and list2.len > 0) do:
+
+    output.append(list1.get(0)); list1.pop;
+    if ( list1.len > 0 )
+       output.append(list1.get(0)); list1.pop; 
+    endIf;
+
+    output.append(list2.get(0)); list2.pop; 
+    if ( list2.len > 0 )
+       output.append(list2.get(0)); list2.pop; 
+    endIf;
+    if ( list2.len > 0 )
+       output.append(list2.get(0)); list2.pop; 
+    endIf;
+
+endLoop;
+
+print output;

@@ -1,0 +1,36 @@
+list list1 = Input.get(0);
+list output;
+
+int counter = 1;
+int innerCounter = 0;
+
+int cooef = 0;
+
+int fibCounter = 2;
+list fib;
+fib.append(1); fib.append(1);
+
+loop ( fibCounter < list1.len ) do:
+
+     fib.append( fib.get(fibCounter-1) + fib.get(fibCounter-2)  );
+    fibCounter++;
+endLoop;
+
+
+output.append( list1.get(0) );
+
+loop ( counter < list1.len ) do:
+
+      loop ( innerCounter <= counter ) do:
+
+          cooef = cooef + list1.get(innerCounter) * fib.get(counter-innerCounter);
+          innerCounter++;
+      endLoop;
+
+      output.append(cooef);
+      counter++;
+      innerCounter = 0;
+      cooef = 0;
+endLoop;
+
+print output;
